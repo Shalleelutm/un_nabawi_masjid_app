@@ -1,0 +1,14 @@
+analyzer:
+  exclude:
+    - build/**
+    - .dart_tool/**
+    - ios/**
+    - android/**
+    - macos/**
+    - linux/**
+    - windows/**
+
+linter:
+  rules:
+    avoid_print: false
+    prefer_single_quotes: true

@@ -1,0 +1,52 @@
+# IMPORTANT - NEVER COMMIT THESE!
+build/
+.dart_tool/
+.idea/
+*.iml
+.DS_Store
+.vscode/
+
+# Flutter/Dart
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/coverage/
+
+# Android
+*.iml
+.gradle/
+/local.properties
+.idea/
+.DS_Store
+/build/
+/captures/
+.externalNativeBuild
+android/app/debug
+android/app/profile
+android/app/release
+
+# iOS
+Pods/
+Podfile.lock
+*.xcworkspace
+xcuserdata/
+*.xccheckout
+*.moved-aside
+DerivedData/
+*.hmap
+*.ipa
+
+# Firebase
+google-services.json
+GoogleService-Info.plist
+.firebase/
+
+# Environment
+.env
+*.key
+
+# Symbolication
+app.*.symbols
+app.*.map.json

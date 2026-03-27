@@ -1,0 +1,54 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "un-nabawi-masjid-app",
+          "appId": "1:293380949381:android:387bb5b2b960032df3b0ec",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "un-nabawi-masjid-app",
+          "configurations": {
+            "android": "1:293380949381:android:387bb5b2b960032df3b0ec",
+            "ios": "1:293380949381:ios:3b9ccf8377174d52f3b0ec",
+            "macos": "1:293380949381:ios:3b9ccf8377174d52f3b0ec",
+            "web": "1:293380949381:web:1249ef753e1a5579f3b0ec",
+            "windows": "1:293380949381:web:2f866b90d3707af3f3b0ec"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "codebase": "default",
+      "disallowLegacyRuntimeConfig": true,
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ],
+      "source": "functions"
+    },
+    {
+      "source": "functions2",
+      "codebase": "functions",
+      "disallowLegacyRuntimeConfig": true,
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ]
+}
