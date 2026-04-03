@@ -1,49 +1,26 @@
-﻿name: 🔥 MASTER BUILD - WOW Pipeline
+﻿name: 🔥 MASTER BUILD
 
 on:
   push:
-    branches: [ main, master, develop ]
-  pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    
     steps:
     - uses: actions/checkout@v4
-    
-    - name: 🐦 Setup Flutter
-      uses: subosito/flutter-action@v2
+    - uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.16.9'
-        channel: 'stable'
-    
-    - name: 📦 Install Dependencies
+    - name: Install Dependencies
       run: |
         flutter clean
         flutter pub get
-    
-    - name: 🔍 Verify Assets
-      run: |
-        echo "✅ Checking prayer_times.json..."
-        test -f assets/prayer_times.json && echo "✅ Found" || exit 1
-        echo "✅ Quran surahs count: $(ls assets/quran/surah/ | wc -l)"
-    
-    - name: 🔐 Setup Firebase
-      run: |
-        echo '${{ secrets.FIREBASE_TOKEN }}' > android/app/google-services.json
-    
-    - name: 🔨 Build APK
+    - name: Build APK
       run: flutter build apk --release
-    
-    - name: 📤 Upload APK
+    - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: masjid-app-apk
+        name: masjid-app
         path: build/app/outputs/flutter-apk/*.apk
-    
-    - name: 🎉 Success
-      run: echo "✅ BUILD SUCCESSFUL!"

@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "293380949381",
+    "project_id": "un-nabawi-masjid-app",
+    "storage_bucket": "un-nabawi-masjid-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:293380949381:android:387bb5b2b960032df3b0ec",
+        "android_client_info": {
+          "package_name": "com.example.un_nabawi_masjid_app_clean"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "293380949381-cm490vt0lre1i1h0ek2q64qcg2l8ot9t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBs-qOZwh-UDLqCUgC7j92TePwQHnWY4tw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "293380949381-cm490vt0lre1i1h0ek2q64qcg2l8ot9t.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "293380949381-jki1bac4akph5474la8d24lkav9li43u.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.unNabawiMasjidAppClean"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
