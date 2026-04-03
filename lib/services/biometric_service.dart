@@ -18,7 +18,7 @@ class BiometricService {
 
       final authenticated = await _auth.authenticate(
         localizedReason: 'Scan fingerprint to login',
-        biometricOnly: true,
+        options: const AuthenticationOptions(biometricOnly: true),
       );
 
       return authenticated;
