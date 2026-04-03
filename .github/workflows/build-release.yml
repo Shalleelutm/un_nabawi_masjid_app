@@ -1,0 +1,109 @@
+name: 🚀 Build & Release APK
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: 🐦 Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.16.0'
+        channel: 'stable'
+        cache: true
+    
+    - name: 📦 Install dependencies
+      run: |
+        flutter clean
+        flutter pub get
+    
+    - name: 🔍 Validate assets
+      run: |
+        if [ ! -f "assets/prayer_times.json" ]; then
+          echo "❌ Missing prayer_times.json"
+          exit 1
+        fi
+        if [ ! -d "assets/quran/surah" ]; then
+          echo "❌ Missing Quran surah folder"
+          exit 1
+        fi
+        echo "✅ All assets validated"
+    
+    - name: 📝 Generate files
+      run: flutter pub run build_runner build --delete-conflicting-outputs
+    
+    - name: 🎯 Build APK
+      run: |
+        flutter build apk --release --split-per-abi
+        flutter build apk --release
+    
+    - name: 📦 Sign APK (Optional - Add your keystore)
+      if: false  # Enable when you have keystore
+      run: |
+        echo "Signing APK..."
+        # Add signing steps here
+    
+    - name: 📤 Upload APK artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-apks
+        path: |
+          build/app/outputs/flutter-apk/*.apk
+        retention-days: 30
+    
+    - name: 📱 Upload to Firebase App Distribution
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      env:
+        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      run: |
+        # Install Firebase CLI
+        curl -sL https://firebase.tools | bash
+        # Upload to Firebase
+        firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk \
+          --app ${{ secrets.FIREBASE_APP_ID }} \
+          --token "$FIREBASE_TOKEN" \
+          --groups "testers"
+
+  # Run tests
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.16.0'
+    - run: flutter pub get
+    - run: flutter test --coverage
+    - run: flutter analyze
+    
+  # Deploy to GitHub Pages (for documentation)
+  deploy-docs:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+    - uses: actions/checkout@v4
+    - name: Generate docs
+      run: |
+        flutter pub get
+        flutter pub run dartdoc
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./doc/api
