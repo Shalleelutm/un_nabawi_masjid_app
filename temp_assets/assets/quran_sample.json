@@ -1,0 +1,36 @@
+[
+  {
+    "number": 1,
+    "name": "Al-Fatiha",
+    "verses": [
+      {
+        "arabic": "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+        "translation": "In the name of Allah, the Most Gracious, the Most Merciful."
+      },
+      {
+        "arabic": "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+        "translation": "All praise is due to Allah, Lord of the worlds."
+      },
+      {
+        "arabic": "الرَّحْمَٰنِ الرَّحِيمِ",
+        "translation": "The Most Gracious, the Most Merciful."
+      },
+      {
+        "arabic": "مَالِكِ يَوْمِ الدِّينِ",
+        "translation": "Master of the Day of Judgment."
+      },
+      {
+        "arabic": "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
+        "translation": "You alone we worship, and You alone we ask for help."
+      },
+      {
+        "arabic": "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ",
+        "translation": "Guide us to the straight path."
+      },
+      {
+        "arabic": "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ",
+        "translation": "The path of those You have blessed."
+      }
+    ]
+  }
+]

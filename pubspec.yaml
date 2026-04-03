@@ -53,3 +53,17 @@ dependencies:
   local_auth: ^3.0.1
 
   flutter_launcher_icons: ^0.13.1
+
+# ========== ADD THIS SECTION ==========
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/prayer_times.json
+    - assets/quran_sample.json
+    - assets/ramadan_hadith.json
+    - assets/audio/
+    - assets/images/
+    - assets/quran/
+    - assets/quran/surah/
+
