@@ -1,4 +1,4 @@
-﻿name: un_nabawi_masjid_app_clean
+name: un_nabawi_masjid_app_clean
 description: Local mosque application for Un Nabawi Masjid
 publish_to: "none"
 
@@ -21,7 +21,7 @@ dependencies:
   flutter_local_notifications: ^16.3.0
   timezone: ^0.9.2
   intl: ^0.18.1
-  hijri_calendar: ^1.0.4
+  hijri_calendar: ^1.0.0
   url_launcher: ^6.2.0
   firebase_core: ^2.25.0
   firebase_auth: ^4.17.0
