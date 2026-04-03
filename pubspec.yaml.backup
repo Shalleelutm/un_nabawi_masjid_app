@@ -1,11 +1,11 @@
-﻿name: un_nabawi_masjid_app_clean
+name: un_nabawi_masjid_app_clean
 description: Local mosque application for Un Nabawi Masjid
 publish_to: "none"
 
 version: 1.0.0+1
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.1.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -16,20 +16,25 @@ dependencies:
   sqflite: ^2.4.2
   path: ^1.9.1
   uuid: ^4.4.0
+
   audioplayers: ^6.1.0
   confetti: ^0.7.0
-  flutter_local_notifications: ^17.2.3
+
+  flutter_local_notifications: ^18.0.1
   timezone: ^0.9.4
   intl: ^0.19.0
+
   hijri_calendar: ^1.0.4
   url_launcher: ^6.3.0
-  firebase_core: ^3.8.0
-  firebase_auth: ^5.3.0
-  cloud_firestore: ^5.5.0
-  firebase_messaging: ^15.1.0
+
+  firebase_core: ^2.30.0
+  firebase_auth: ^4.19.0
+  cloud_firestore: ^4.17.0
+  firebase_messaging: ^14.9.0
   google_sign_in: ^6.2.1
   image_picker: ^1.1.2
-  firebase_storage: ^12.3.0
+  firebase_storage: ^11.7.7
+
   lottie: ^3.0.0
   animations: ^2.0.8
   simple_animations: ^5.0.2
@@ -41,14 +46,18 @@ dependencies:
   flip_card: ^0.7.0
   liquid_swipe: ^3.1.0
   simple_ripple_animation: ^0.0.5
+
   just_audio: ^0.9.36
   audio_waveforms: ^1.0.4
   particles_flutter: ^1.0.0
-  local_auth: ^2.1.7
+  local_auth: ^3.0.1
+
   flutter_launcher_icons: ^0.13.1
 
+# ========== ADD THIS SECTION ==========
 flutter:
   uses-material-design: true
+  
   assets:
     - assets/prayer_times.json
     - assets/quran_sample.json
@@ -57,3 +66,4 @@ flutter:
     - assets/images/
     - assets/quran/
     - assets/quran/surah/
+

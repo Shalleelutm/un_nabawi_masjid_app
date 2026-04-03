@@ -8,3 +8,7 @@ local.properties
 *.keystore
 *.jks
 *.lock
+.idea/
+.vscode/
+*.log
+temp_assets/
