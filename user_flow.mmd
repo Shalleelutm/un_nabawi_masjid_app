@@ -1,0 +1,21 @@
+﻿sequenceDiagram
+    participant U as 👤 User
+    participant A as 📱 Flutter App
+    participant F as 🔥 Firebase Auth
+    participant D as 💾 Firestore DB
+    participant N as 📨 FCM
+    participant P as 💳 Payment Gateway
+
+    U->>A: Opens App
+    A->>F: Google Sign In
+    F-->>A: Auth Token
+    A->>D: Fetch Prayer Times
+    D-->>A: Prayer Data
+    A-->>U: Display Prayer Times
+
+    U->>A: Make Donation
+    A->>P: Process Payment
+    P-->>A: Payment Confirmed
+    A->>D: Save Donation Record
+    D-->>N: Trigger Notification
+    N-->>U: Push Notification
