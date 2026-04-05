@@ -101,3 +101,8 @@
 **This is not just an app - it's a complete enterprise solution ready for investment.**
 
 *Built with ❤️ for the global Muslim community*
+
+
+## 🏗️ System Architecture
+
+![Architecture](masjid_architecture.png)
