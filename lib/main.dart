@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'app.dart';
 import 'firebase_options.dart';
@@ -19,15 +20,12 @@ import 'services/fcm_service.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-  } catch (e) {
-    debugPrint('Firebase init skipped: $e');
-  }
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
-  // 🔥 START CORE SERVICES
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
   await FcmService.instance.init();
 
   runApp(
@@ -45,12 +43,7 @@ Future<void> main() async {
     ),
   );
 
-  // 🔥 PRAYER ENGINE
   Future.microtask(() async {
-    try {
-      await PrayerAutoSchedulerService.instance.start();
-    } catch (e) {
-      debugPrint('Prayer scheduler error: $e');
-    }
+    await PrayerAutoSchedulerService.instance.start();
   });
 }

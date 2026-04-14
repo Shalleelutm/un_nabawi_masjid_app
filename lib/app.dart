@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'core/app_routes.dart';
 import 'core/app_theme.dart';
+import 'services/prayer_notification_service.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -10,6 +11,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Un Nabawi Masjid',
       debugShowCheckedModeBanner: false,
+
+      // 🔥 REQUIRED FOR ADHAN FULLSCREEN
+      navigatorKey: AdhanTrigger.navigatorKey,
 
       // THEME
       theme: AppTheme.light(),

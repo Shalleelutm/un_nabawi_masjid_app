@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'local_notification_service.dart';
 import 'prayer_time_service.dart';
+import '../screens/adhan/adhan_screen.dart';
 
 class PrayerNotificationService {
   PrayerNotificationService._();
@@ -108,6 +110,12 @@ class PrayerNotificationService {
       channelId: LocalNotificationService.prayerChannelId,
       channelName: 'Prayer Notifications',
     );
+
+    // 🔥 TRIGGER FULLSCREEN ADHAN
+    Future.delayed(
+      when.difference(DateTime.now()),
+      () => AdhanTrigger.showAdhan(),
+    );
   }
 
   /*
@@ -143,6 +151,29 @@ class PrayerNotificationService {
       body: 'Please proceed to the masjid for Jumu’ah prayer.',
       channelId: LocalNotificationService.generalChannelId,
       channelName: 'General Notifications',
+    );
+  }
+}
+
+/*
+------------------------------------------------------------
+ADHAN TRIGGER SYSTEM
+------------------------------------------------------------
+*/
+
+class AdhanTrigger {
+  static GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
+
+  static void showAdhan() {
+    final context = navigatorKey.currentContext;
+    if (context == null) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const AdhanScreen(),
+      ),
     );
   }
 }

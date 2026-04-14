@@ -54,7 +54,7 @@ flutter:
     - assets/prayer_times.json
     - assets/quran_sample.json
     - assets/ramadan_hadith.json
-    - assets/audio/
+    - assets/audio/adhan.mp3
     - assets/images/
     - assets/quran/
     - assets/quran/surah/

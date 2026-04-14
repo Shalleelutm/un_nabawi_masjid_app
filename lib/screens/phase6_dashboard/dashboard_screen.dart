@@ -471,6 +471,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   label: const Text('Post Message'),
                 ),
                 const SizedBox(height: 14),
+                // 🔒 STORAGE DISABLED TEMPORARILY
                 if (auth.isAdmin)
                   ElevatedButton.icon(
                     onPressed: () {
