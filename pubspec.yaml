@@ -1,4 +1,4 @@
-﻿name: un_nabawi_masjid_app_clean
+name: un_nabawi_masjid_app_clean
 description: Local mosque application for Un Nabawi Masjid
 publish_to: "none"
 
@@ -46,6 +46,7 @@ dependencies:
   particles_flutter: ^1.0.0
   local_auth: ^2.1.6
   flutter_launcher_icons: ^0.13.1
+  geolocator: ^12.0.0
 
 flutter:
   uses-material-design: true

@@ -13,27 +13,12 @@ import 'providers/prayer_provider.dart';
 import 'providers/settings_provider.dart';
 import 'providers/reservation_provider.dart';
 
-import 'services/fcm_service.dart';
-import 'services/local_notification_service.dart';
 import 'services/prayer_auto_scheduler_service.dart';
-import 'services/prayer_notification_service.dart';
-import 'services/prayer_time_change_detector.dart';
-import 'services/prayer_time_service.dart';
-import 'services/ramadan_auto_hadith_service.dart';
+import 'services/fcm_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  /// Load local timetable first so app opens offline
-  await PrayerTimeService.instance.loadFromAssets();
-
-  /// Init local notifications first
-  await LocalNotificationService.instance.init();
-
-  /// Init prayer notifications first
-  await PrayerNotificationService.instance.init();
-
-  /// Firebase should not block app opening
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -41,6 +26,9 @@ Future<void> main() async {
   } catch (e) {
     debugPrint('Firebase init skipped: $e');
   }
+
+  // 🔥 START CORE SERVICES
+  await FcmService.instance.init();
 
   runApp(
     MultiProvider(
@@ -57,30 +45,12 @@ Future<void> main() async {
     ),
   );
 
-  /// Start online/background services after UI is already shown
+  // 🔥 PRAYER ENGINE
   Future.microtask(() async {
-    try {
-      await FcmService.instance.init();
-    } catch (e) {
-      debugPrint('FCM init skipped: $e');
-    }
-
-    try {
-      await PrayerTimeChangeDetector.instance.detectChanges();
-    } catch (e) {
-      debugPrint('Prayer time change detector skipped: $e');
-    }
-
     try {
       await PrayerAutoSchedulerService.instance.start();
     } catch (e) {
-      debugPrint('Prayer scheduler skipped: $e');
-    }
-
-    try {
-      await RamadanAutoHadithService.scheduleRamadanHadiths();
-    } catch (e) {
-      debugPrint('Ramadan hadith scheduler skipped: $e');
+      debugPrint('Prayer scheduler error: $e');
     }
   });
 }

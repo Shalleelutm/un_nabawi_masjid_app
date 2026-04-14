@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -77,12 +79,10 @@ class _AnnouncementAutoNotifyScreenState
 
     setState(() => _loading = true);
 
-    await AnnouncementService.addAnnouncement(
-      title: t,
-      message: b,
-      isImportant: _isImportant,
-      createdBy: auth.email.isEmpty ? 'admin' : auth.email,
-    );
+await AnnouncementService.createAnnouncement(
+  title: t,
+  message: b,
+);
 
     await LocalNotificationService.instance.showNow(
       title: t,

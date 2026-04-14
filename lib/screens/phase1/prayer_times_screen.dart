@@ -279,7 +279,8 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
     if (monthRows.isEmpty) return monthRows;
 
     if (_selectedDay != null) {
-      final selectedIndex = monthRows.indexWhere((row) => row.date.day == _selectedDay);
+      final selectedIndex =
+          monthRows.indexWhere((row) => row.date.day == _selectedDay);
       if (selectedIndex > 0) {
         return [
           ...monthRows.sublist(selectedIndex),
@@ -311,7 +312,7 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
     return Consumer<PrayerProvider>(
       builder: (context, provider, _) {
         if (!provider.loaded) {
-          return const Scaffold(
+          return Scaffold(
             body: Center(
               child: KaabaLoader(
                 size: 110,
@@ -321,7 +322,8 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
           );
         }
 
-        final monthRows = provider.month(_selectedMonth.year, _selectedMonth.month);
+        final monthRows =
+            provider.month(_selectedMonth.year, _selectedMonth.month);
         final sortedRows = _sortedMonthRows(monthRows);
 
         return Scaffold(
@@ -329,7 +331,8 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
             title: const Text('Prayer Times'),
             actions: [
               IconButton(
-                onPressed: () => context.read<PrayerProvider>().reloadAndResync(),
+                onPressed: () =>
+                    context.read<PrayerProvider>().reloadAndResync(),
                 icon: const Icon(Icons.refresh_rounded),
               ),
             ],

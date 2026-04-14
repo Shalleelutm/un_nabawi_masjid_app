@@ -1,18 +1,86 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/app_routes.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/notification_settings_provider.dart';
+import '../../services/post_service.dart';
 import '../../services/prayer_time_service.dart';
 import '../../widgets/glassmorphic_card.dart';
 import '../../widgets/palestine_gradient_background.dart';
+import '../../widgets/ramadan_countdown.dart';
 import '../../widgets/wow_text.dart';
+import '../admin/admin_media_upload_screen.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _notificationSub;
+  String? _lastShownNotificationId;
+  bool _dialogOpen = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _notificationSub = FirebaseFirestore.instance
+          .collection('notifications')
+          .orderBy('createdAt', descending: true)
+          .limit(1)
+          .snapshots()
+          .listen(
+        (snapshot) {
+          if (!mounted || snapshot.docs.isEmpty) return;
+
+          final doc = snapshot.docs.first;
+          final data = doc.data();
+
+          if (data['type'] != 'announcement') return;
+          if (_dialogOpen) return;
+          if (_lastShownNotificationId == doc.id) return;
+
+          _lastShownNotificationId = doc.id;
+          _dialogOpen = true;
+
+          showDialog<void>(
+            context: context,
+            builder: (_) => AlertDialog(
+              title: Text((data['title'] ?? '').toString()),
+              content: Text((data['message'] ?? '').toString()),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          ).whenComplete(() {
+            _dialogOpen = false;
+          });
+        },
+        onError: (error) {
+          debugPrint('Notifications listener skipped: $error');
+        },
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _notificationSub?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -269,6 +337,153 @@ class DashboardScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+                const SizedBox(height: 18),
+                const RamadanCountdown(),
+                const SizedBox(height: 18),
+                Text(
+                  'Community Wall',
+                  style: text.titleLarge?.copyWith(fontWeight: FontWeight.w900),
+                ),
+                const SizedBox(height: 12),
+                StreamBuilder(
+                  stream: PostService.streamPosts(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return Container(
+                        padding: const EdgeInsets.all(18),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(22),
+                          color: Colors.white.withValues(alpha: 0.92),
+                        ),
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+
+                    final posts = snapshot.data!;
+
+                    if (posts.isEmpty) {
+                      return Container(
+                        padding: const EdgeInsets.all(18),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(22),
+                          color: Colors.white.withValues(alpha: 0.92),
+                        ),
+                        child: const Text(
+                          'No community posts yet.',
+                          style: TextStyle(fontWeight: FontWeight.w700),
+                        ),
+                      );
+                    }
+
+                    return Column(
+                      children: posts.map((p) {
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(22),
+                            color: Colors.white.withValues(alpha: 0.96),
+                            boxShadow: const [
+                              BoxShadow(
+                                blurRadius: 8,
+                                color: Colors.black12,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 46,
+                                height: 46,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  color: cs.primary.withValues(alpha: 0.10),
+                                ),
+                                child: Icon(
+                                  Icons.person_rounded,
+                                  color: cs.primary,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      p.userName,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      p.text,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        height: 1.3,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          onPressed: () {
+                                            PostService.likePost(p.id);
+                                          },
+                                          icon: const Icon(
+                                            Icons.favorite_rounded,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                        Text(
+                                          '${p.likes}',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  },
+                ),
+                const SizedBox(height: 14),
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    await PostService.addPost(
+                      'Masjid update ✨',
+                      userName: auth.displayName.isEmpty
+                          ? 'Member'
+                          : auth.displayName,
+                    );
+                  },
+                  icon: const Icon(Icons.add_rounded),
+                  label: const Text('Post Message'),
+                ),
+                const SizedBox(height: 14),
+                if (auth.isAdmin)
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AdminMediaUploadScreen(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.upload_rounded),
+                    label: const Text('Upload Media (Admin)'),
+                  ),
               ],
             ),
           ),

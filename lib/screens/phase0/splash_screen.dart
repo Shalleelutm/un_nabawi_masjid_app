@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../core/app_routes.dart';
+import '../../services/app_initializer_service.dart';
 import '../../widgets/masjid_loader.dart';
 import '../../widgets/palestine_gradient_background.dart';
 import '../../widgets/wow_text.dart';
@@ -44,6 +45,10 @@ class _SplashScreenState extends State<SplashScreen>
         curve: Curves.easeOutCubic,
       ),
     );
+
+    Future.microtask(() async {
+      await AppInitializerService.initialize();
+    });
 
     _timer = Timer(const Duration(seconds: 3), () {
       if (!mounted) return;

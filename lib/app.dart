@@ -17,7 +17,6 @@ class MyApp extends StatelessWidget {
       // START SCREEN
       initialRoute: AppRoutes.splash,
 
-      // ALL ROUTES (INCLUDING YOUR NEW ONE)
       routes: AppRoutes.routes,
     );
   }

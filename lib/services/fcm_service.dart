@@ -1,82 +1,47 @@
-import 'dart:convert';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
-
-import 'local_notification_service.dart';
-import 'prayer_notification_engine.dart';
-
-@pragma('vm:entry-point')
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {}
+import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class FcmService {
+  static final instance = FcmService._();
   FcmService._();
-  static final FcmService instance = FcmService._();
 
-  final FirebaseMessaging _messaging = FirebaseMessaging.instance;
-
-  bool _initialized = false;
+  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
+  final FlutterLocalNotificationsPlugin _local =
+      FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
-    if (_initialized) return;
+    await _fcm.requestPermission();
 
-    await LocalNotificationService.instance.init();
+    const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const initSettings = InitializationSettings(android: androidInit);
 
-    final settings = await _messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-      provisional: false,
-    );
+    await _local.initialize(initSettings);
 
-    if (kDebugMode) {
-      debugPrint('FCM permission status: ${settings.authorizationStatus}');
-    }
+    await _fcm.subscribeToTopic('members');
 
-    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    FirebaseMessaging.onMessage.listen((event) {
+      final notif = event.notification;
 
-    final token = await _messaging.getToken();
-    if (kDebugMode) {
-      debugPrint('FCM token: $token');
-    }
-
-    await _messaging.subscribeToTopic('members');
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      final notification = message.notification;
-      final data = message.data;
-
-      final title = notification?.title ?? data['title'] ?? 'Notification';
-      final body = notification?.body ?? data['body'] ?? '';
-
-      await LocalNotificationService.instance.showNow(
-        notificationId: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-        title: title,
-        body: body,
-        payload: jsonEncode(data),
-      );
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      if (kDebugMode) {
-        debugPrint('Notification opened: ${message.data}');
+      if (notif != null) {
+        _local.show(
+          DateTime.now().millisecondsSinceEpoch ~/ 1000,
+          notif.title,
+          notif.body,
+          const NotificationDetails(
+            android: AndroidNotificationDetails(
+              'masjid_channel',
+              'Masjid Notifications',
+              importance: Importance.max,
+              priority: Priority.high,
+            ),
+          ),
+        );
       }
     });
 
-    final initialMessage = await _messaging.getInitialMessage();
-    if (initialMessage != null && kDebugMode) {
-      debugPrint(
-        'App opened from terminated state by notification: ${initialMessage.data}',
-      );
-    }
-
-    await PrayerNotificationEngine.instance.initializeAndSchedule();
-
-    _initialized = true;
-  }
-
-  Future<void> resubscribeMembersTopic() async {
-    await _messaging.unsubscribeFromTopic('members');
-    await _messaging.subscribeToTopic('members');
+    FirebaseMessaging.onMessageOpenedApp.listen((event) {
+      debugPrint('Notification clicked');
+    });
   }
 }

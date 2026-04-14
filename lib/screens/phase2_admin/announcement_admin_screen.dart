@@ -1,10 +1,9 @@
-// ignore_for_file: sort_child_properties_last, use_build_context_synchronously
+// ignore_for_file: unused_import, sort_child_properties_last, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
 
 import '../../services/announcement_service.dart';
-import '../../providers/auth_provider.dart';
 
 class AnnouncementAdminScreen extends StatefulWidget {
   const AnnouncementAdminScreen({super.key});
@@ -33,8 +32,6 @@ class _AnnouncementAdminScreenState
   @override
   Widget build(BuildContext context) {
 
-    final auth = context.read<AuthProvider>();
-
     return Scaffold(
       appBar: AppBar(title: const Text('Admin Broadcast')),
       body: Padding(
@@ -44,9 +41,7 @@ class _AnnouncementAdminScreenState
 
             TextField(
               controller: _titleController,
-              decoration: const InputDecoration(
-                labelText: 'Title',
-              ),
+              decoration: const InputDecoration(labelText: 'Title'),
             ),
 
             const SizedBox(height: 16),
@@ -54,9 +49,7 @@ class _AnnouncementAdminScreenState
             TextField(
               controller: _messageController,
               maxLines: 4,
-              decoration: const InputDecoration(
-                labelText: 'Message',
-              ),
+              decoration: const InputDecoration(labelText: 'Message'),
             ),
 
             SwitchListTile(
@@ -77,11 +70,9 @@ class _AnnouncementAdminScreenState
 
                       setState(() => _loading = true);
 
-                      await AnnouncementService.addAnnouncement(
-                        title: _titleController.text,
-                        message: _messageController.text,
-                        isImportant: _important,
-                        createdBy: auth.email,
+                      await AnnouncementService.createAnnouncement(
+                        title: _titleController.text.trim(),
+                        message: _messageController.text.trim(),
                       );
 
                       setState(() => _loading = false);
@@ -92,9 +83,7 @@ class _AnnouncementAdminScreenState
                       if (!mounted) return;
 
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Announcement sent'),
-                        ),
+                        const SnackBar(content: Text('Announcement sent')),
                       );
                     },
             )

@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: unused_import, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -243,8 +243,8 @@ class _LoginScreenState extends State<LoginScreen>
             ),
             const SizedBox(height: 16),
             if (auth.isLoading)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 18),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 18),
                 child: KaabaLoader(
                   size: 72,
                   message: 'Logging in...',
@@ -384,8 +384,8 @@ class _LoginScreenState extends State<LoginScreen>
             ),
             const SizedBox(height: 16),
             if (auth.isLoading)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 18),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 18),
                 child: KaabaLoader(
                   size: 72,
                   message: 'Creating account...',

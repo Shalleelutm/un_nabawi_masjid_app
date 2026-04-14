@@ -1,13 +1,14 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 
 class KaabaLoader extends StatefulWidget {
   final double size;
-  final String? message;
+  final String message;
 
   const KaabaLoader({
     super.key,
-    this.size = 80,
-    this.message,
+    this.size = 100,
+    this.message = '',
   });
 
   @override
@@ -16,9 +17,16 @@ class KaabaLoader extends StatefulWidget {
 
 class _KaabaLoaderState extends State<KaabaLoader>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _controller =
-      AnimationController(vsync: this, duration: const Duration(seconds: 6))
-        ..repeat();
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 8),
+    )..repeat();
+  }
 
   @override
   void dispose() {
@@ -28,50 +36,74 @@ class _KaabaLoaderState extends State<KaabaLoader>
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final edge = widget.size;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        RotationTransition(
-          turns: _controller,
-          child: Container(
-            width: widget.size,
-            height: widget.size,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: RadialGradient(
-                colors: [
-                  cs.primary.withValues(alpha: 0.12),
-                  cs.primary.withValues(alpha: 0.02),
-                ],
+        AnimatedBuilder(
+          animation: _controller,
+          builder: (_, __) {
+            return Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.identity()
+                ..setEntry(3, 2, 0.002)
+                ..rotateY(_controller.value * 2 * pi),
+              child: Container(
+                width: edge,
+                height: edge,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(edge * 0.12),
+                  border: Border.all(
+                    color: Colors.amber,
+                    width: edge * 0.04,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.amber.withValues(alpha: 0.45),
+                      blurRadius: edge * 0.22,
+                      spreadRadius: edge * 0.03,
+                    ),
+                  ],
+                ),
+                child: Stack(
+                  children: [
+                    Positioned(
+                      top: edge * 0.08,
+                      left: edge * 0.08,
+                      right: edge * 0.08,
+                      child: Container(
+                        height: edge * 0.12,
+                        decoration: BoxDecoration(
+                          color: Colors.amber,
+                          borderRadius: BorderRadius.circular(edge * 0.03),
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: Container(
+                        width: edge * 0.26,
+                        height: edge * 0.26,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white.withValues(alpha: 0.10),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            child: Center(
-              child: Image.asset(
-                'assets/images/Kaaba/kaaba.png',
-                width: widget.size * 0.7,
-                height: widget.size * 0.7,
-                fit: BoxFit.contain,
-                errorBuilder: (_, __, ___) {
-                  return Icon(
-                    Icons.mosque_rounded,
-                    size: widget.size * 0.55,
-                    color: cs.primary,
-                  );
-                },
-              ),
-            ),
-          ),
+            );
+          },
         ),
-        if (widget.message != null) ...[
-          const SizedBox(height: 8),
+        if (widget.message.isNotEmpty) ...[
+          const SizedBox(height: 14),
           Text(
-            widget.message!,
+            widget.message,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: cs.primary,
-              fontWeight: FontWeight.w600,
+            style: const TextStyle(
+              fontWeight: FontWeight.w700,
             ),
           ),
         ],

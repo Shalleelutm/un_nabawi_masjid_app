@@ -1,0 +1,64 @@
+﻿graph TB
+    subgraph "📱 CLIENT LAYER"
+        A[Flutter Mobile App]
+        B[Web Dashboard]
+        C[Admin Portal]
+    end
+
+    subgraph "⚡ API GATEWAY"
+        D[Firebase API Gateway]
+        E[Cloud Functions]
+    end
+
+    subgraph "🔥 FIREBASE BACKEND"
+        F[(Firestore Database)]
+        G[Firebase Authentication]
+        H[Cloud Messaging FCM]
+        I[Cloud Storage]
+    end
+
+    subgraph "🔧 SERVICES"
+        J[Prayer Times API]
+        K[Quran Service]
+        L[Donation Processor]
+        M[Notification Service]
+    end
+
+    subgraph "☁️ CLOUD INFRA"
+        N[AWS S3]
+        O[Azure CDN]
+        P[Google Cloud Run]
+    end
+
+    A --> D
+    B --> D
+    C --> D
+    D --> E
+    E --> F
+    E --> G
+    E --> H
+    E --> I
+    J --> F
+    K --> F
+    L --> H
+    M --> H
+    I --> N
+    I --> O
+    E --> P
+
+    style A fill:#1a1b26,stroke:#7aa2f7,stroke-width:2px,color:#fff
+    style B fill:#1a1b26,stroke:#7aa2f7,stroke-width:2px,color:#fff
+    style C fill:#1a1b26,stroke:#7aa2f7,stroke-width:2px,color:#fff
+    style D fill:#1a1b26,stroke:#f5a97f,stroke-width:2px,color:#fff
+    style E fill:#1a1b26,stroke:#f5a97f,stroke-width:2px,color:#fff
+    style F fill:#1a1b26,stroke:#a6da95,stroke-width:2px,color:#fff
+    style G fill:#1a1b26,stroke:#a6da95,stroke-width:2px,color:#fff
+    style H fill:#1a1b26,stroke:#a6da95,stroke-width:2px,color:#fff
+    style I fill:#1a1b26,stroke:#a6da95,stroke-width:2px,color:#fff
+    style J fill:#1a1b26,stroke:#c6a0f6,stroke-width:2px,color:#fff
+    style K fill:#1a1b26,stroke:#c6a0f6,stroke-width:2px,color:#fff
+    style L fill:#1a1b26,stroke:#c6a0f6,stroke-width:2px,color:#fff
+    style M fill:#1a1b26,stroke:#c6a0f6,stroke-width:2px,color:#fff
+    style N fill:#1a1b26,stroke:#ee99a0,stroke-width:2px,color:#fff
+    style O fill:#1a1b26,stroke:#ee99a0,stroke-width:2px,color:#fff
+    style P fill:#1a1b26,stroke:#ee99a0,stroke-width:2px,color:#fff

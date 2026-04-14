@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/admin_guard.dart';
+
 import '../screens/admin/admin_home_screen.dart';
 import '../screens/admin/admin_reservations_screen.dart';
 import '../screens/admin/admin_requests_screen.dart';
@@ -22,21 +24,28 @@ import '../screens/requests/my_requests_screen.dart';
 import '../screens/gallery/member_gallery_screen.dart';
 
 class AppRoutes {
-  static const splash = '/';
-  static const role = '/role';
-  static const language = '/language';
-  static const simple = '/simple';
+  static const String splash = '/';
+  static const String role = '/role';
+  static const String language = '/language';
+  static const String simple = '/simple';
 
-  static const login = '/login';
-  static const memberHome = '/memberHome';
-  static const adminHome = '/adminHome';
+  static const String login = '/login';
+  static const String memberHome = '/memberHome';
+  static const String adminHome = '/adminHome';
 
-  static const createRequest = '/createRequest';
-  static const myRequests = '/myRequests';
-  static const adminRequests = '/adminRequests';
+  static const String createRequest = '/createRequest';
+  static const String myRequests = '/myRequests';
+  static const String adminRequests = '/adminRequests';
 
-  static const gallery = '/gallery';
-  static const adminGallery = '/adminGallery';
+  static const String gallery = '/gallery';
+  static const String adminGallery = '/adminGallery';
+
+  static const String prayerTimes = '/prayerTimes';
+  static const String nextSalah = '/nextSalah';
+  static const String announcements = '/announcements';
+  static const String quran = '/quran';
+  static const String settings = '/settings';
+  static const String adminReservations = '/adminReservations';
 
   static final Map<String, WidgetBuilder> routes = {
     splash: (_) => const SplashScreen(),
@@ -46,27 +55,32 @@ class AppRoutes {
     login: (_) => const LoginScreen(),
 
     memberHome: (_) => const DashboardScreen(),
-    adminHome: (_) => const AdminHomeScreen(),
+
+    adminHome: (_) => const AdminGuard(
+          child: AdminHomeScreen(),
+        ),
 
     prayerTimes: (_) => const PrayerTimesScreen(),
     nextSalah: (_) => const NextSalahScreen(),
     announcements: (_) => const AnnouncementsScreen(),
     quran: (_) => const QuranReaderScreen(),
     settings: (_) => const SettingsScreen(),
-    adminReservations: (_) => const AdminReservationsScreen(),
+
+    adminReservations: (_) => const AdminGuard(
+          child: AdminReservationsScreen(),
+        ),
 
     createRequest: (_) => const CreateRequestScreen(),
     myRequests: (_) => const MyRequestsScreen(),
-    adminRequests: (_) => const AdminRequestsScreen(),
+
+    adminRequests: (_) => const AdminGuard(
+          child: AdminRequestsScreen(),
+        ),
 
     gallery: (_) => const MemberGalleryScreen(),
-    adminGallery: (_) => const AdminGalleryScreen(),
-  };
 
-  static const prayerTimes = '/prayerTimes';
-  static const nextSalah = '/nextSalah';
-  static const announcements = '/announcements';
-  static const quran = '/quran';
-  static const settings = '/settings';
-  static const adminReservations = '/adminReservations';
+    adminGallery: (_) => const AdminGuard(
+          child: AdminGalleryScreen(),
+        ),
+  };
 }
