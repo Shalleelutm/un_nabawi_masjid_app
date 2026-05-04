@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../providers/role_provider.dart';
 
 class AdminGuard extends StatelessWidget {
   final Widget child;
@@ -9,6 +10,7 @@ class AdminGuard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
+    final role = context.watch<RoleProvider>();
 
     if (!auth.isLoggedIn) {
       return const Scaffold(
@@ -21,7 +23,7 @@ class AdminGuard extends StatelessWidget {
       );
     }
 
-    if (!auth.isAdmin) {
+    if (!role.isAdmin) {
       return const Scaffold(
         body: Center(
           child: Text(

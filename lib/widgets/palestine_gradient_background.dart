@@ -10,7 +10,8 @@ class PalestineGradientBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 600),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -27,41 +28,31 @@ class PalestineGradientBackground extends StatelessWidget {
           Positioned(
             top: -50,
             right: -40,
-            child: Container(
-              width: 180,
-              height: 180,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFF007A3D).withValues(alpha: 0.10),
-              ),
-            ),
+            child: _circle(180, const Color(0xFF007A3D)),
           ),
           Positioned(
             bottom: -40,
             left: -30,
-            child: Container(
-              width: 170,
-              height: 170,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFFCE1126).withValues(alpha: 0.10),
-              ),
-            ),
+            child: _circle(170, const Color(0xFFCE1126)),
           ),
           Positioned(
             top: 150,
             left: -50,
-            child: Container(
-              width: 140,
-              height: 140,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.black.withValues(alpha: 0.05),
-              ),
-            ),
+            child: _circle(140, Colors.black),
           ),
           child,
         ],
+      ),
+    );
+  }
+
+  Widget _circle(double size, Color color) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color.withValues(alpha: 0.08),
       ),
     );
   }

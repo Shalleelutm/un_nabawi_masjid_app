@@ -1,10 +1,10 @@
-// ignore_for_file: prefer_single_quotes
-
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:vibration/vibration.dart';
 
 class AdhanScreen extends StatefulWidget {
-  const AdhanScreen({super.key});
+  final String prayerName;
+  const AdhanScreen({super.key, this.prayerName = 'Prayer'});
 
   @override
   State<AdhanScreen> createState() => _AdhanScreenState();
@@ -13,19 +13,46 @@ class AdhanScreen extends StatefulWidget {
 class _AdhanScreenState extends State<AdhanScreen> {
   final AudioPlayer _player = AudioPlayer();
 
+  bool _isPlaying = true;
+  bool _isPaused = false;
+
   @override
   void initState() {
     super.initState();
-    _playAdhan();
+    _play();
   }
 
-  Future<void> _playAdhan() async {
+  Future<void> _play() async {
     await _player.play(AssetSource('audio/adhan.mp3'));
+    await Vibration.vibrate(duration: 2000);
+  }
+
+  Future<void> _pause() async {
+    await _player.pause();
+    setState(() {
+      _isPaused = true;
+      _isPlaying = false;
+    });
+  }
+
+  Future<void> _resume() async {
+    await _player.resume();
+    setState(() {
+      _isPaused = false;
+      _isPlaying = true;
+    });
+  }
+
+  Future<void> _stop() async {
+    await _player.stop();
+    await Vibration.cancel();
+    Navigator.pop(context);
   }
 
   @override
   void dispose() {
     _player.dispose();
+    Vibration.cancel();
     super.dispose();
   }
 
@@ -33,38 +60,54 @@ class _AdhanScreenState extends State<AdhanScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: SafeArea(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.mosque_rounded,
-              size: 100,
-              color: Colors.amber,
+            const Icon(Icons.mosque, color: Colors.amber, size: 100),
+
+            const SizedBox(height: 20),
+
+            Text(
+              '${widget.prayerName} Time',
+              style: const TextStyle(
+                color: Colors.amber,
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
             ),
+
             const SizedBox(height: 30),
+
             const Text(
-              "Allahu Akbar",
-              style: TextStyle(
-                fontSize: 34,
-                fontWeight: FontWeight.w900,
-                color: Colors.white,
-              ),
+              'اللَّهُ أَكْبَرُ',
+              style: TextStyle(color: Colors.white, fontSize: 36),
             ),
-            const SizedBox(height: 10),
-            const Text(
-              "Prayer Time",
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.white70,
-              ),
-            ),
+
             const SizedBox(height: 40),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("Dismiss"),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: _stop,
+                  child: const Text('Stop'),
+                ),
+
+                const SizedBox(width: 12),
+
+                if (_isPlaying)
+                  ElevatedButton(
+                    onPressed: _pause,
+                    child: const Text('Pause'),
+                  ),
+
+                if (_isPaused)
+                  ElevatedButton(
+                    onPressed: _resume,
+                    child: const Text('Resume'),
+                  ),
+              ],
             )
           ],
         ),

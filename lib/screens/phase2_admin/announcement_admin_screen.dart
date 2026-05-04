@@ -1,8 +1,6 @@
 // ignore_for_file: unused_import, sort_child_properties_last, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-
-
 import '../../services/announcement_service.dart';
 
 class AnnouncementAdminScreen extends StatefulWidget {
@@ -52,39 +50,60 @@ class _AnnouncementAdminScreenState
               decoration: const InputDecoration(labelText: 'Message'),
             ),
 
+            // ✅ FIXED: activeColor → activeThumbColor (deprecated fix)
             SwitchListTile(
               value: _important,
+              activeThumbColor: Colors.red,  // ✅ REPLACED activeColor with activeThumbColor
+              inactiveThumbColor: Colors.grey,
               onChanged: (v) => setState(() => _important = v),
-              title: const Text('Important'),
+              title: Text(
+                'Important Announcement',
+                style: TextStyle(
+                  color: _important ? Colors.red : Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
 
             const SizedBox(height: 20),
 
             ElevatedButton(
               child: _loading
-                  ? const CircularProgressIndicator()
+                  ? const CircularProgressIndicator(color: Colors.white)
                   : const Text('Send Announcement'),
               onPressed: _loading
                   ? null
                   : () async {
 
-                      setState(() => _loading = true);
+                      try {
+                        setState(() => _loading = true);
 
-                      await AnnouncementService.createAnnouncement(
-                        title: _titleController.text.trim(),
-                        message: _messageController.text.trim(),
-                      );
+                        await AnnouncementService.createAnnouncement(
+                          title: _titleController.text.trim(),
+                          message: _messageController.text.trim(),
+                        );
 
-                      setState(() => _loading = false);
+                        if (!mounted) return;
 
-                      _titleController.clear();
-                      _messageController.clear();
+                        _titleController.clear();
+                        _messageController.clear();
 
-                      if (!mounted) return;
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Announcement sent')),
-                      );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Broadcast sent to all users'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Something went wrong'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } finally {
+                        if (mounted) setState(() => _loading = false);
+                      }
                     },
             )
           ],

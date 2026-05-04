@@ -1,8 +1,8 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; // ✅ ONLY THIS (clean)
+
+import '../app.dart';
 import 'local_notification_service.dart';
 import 'prayer_time_service.dart';
-import '../screens/adhan/adhan_screen.dart';
 
 class PrayerNotificationService {
   PrayerNotificationService._();
@@ -23,15 +23,8 @@ class PrayerNotificationService {
     if (_initialized) return;
 
     await LocalNotificationService.instance.init();
-
     _initialized = true;
   }
-
-  /*
-  ------------------------------------------------------------
-  PRAYER NOTIFICATION ENGINE
-  ------------------------------------------------------------
-  */
 
   Future<void> refreshUpcomingPrayerSchedules(List<PrayerDay> upcoming) async {
     await initialize();
@@ -41,60 +34,21 @@ class PrayerNotificationService {
     for (int dayIndex = 0; dayIndex < upcoming.length; dayIndex++) {
       final day = upcoming[dayIndex];
 
-      await _schedulePrayer(
-        dayIndex: dayIndex,
-        prayerIndex: 1,
-        prayerName: 'Fajr',
-        date: day.date,
-        adhanTime: day.fajrAdhan,
-      );
-
-      await _schedulePrayer(
-        dayIndex: dayIndex,
-        prayerIndex: 2,
-        prayerName: 'Zohr',
-        date: day.date,
-        adhanTime: day.zohrAdhan,
-      );
-
-      await _schedulePrayer(
-        dayIndex: dayIndex,
-        prayerIndex: 3,
-        prayerName: 'Asr',
-        date: day.date,
-        adhanTime: day.asrAdhan,
-      );
-
-      await _schedulePrayer(
-        dayIndex: dayIndex,
-        prayerIndex: 4,
-        prayerName: 'Maghrib',
-        date: day.date,
-        adhanTime: day.maghribAdhan,
-      );
-
-      await _schedulePrayer(
-        dayIndex: dayIndex,
-        prayerIndex: 5,
-        prayerName: 'Esha',
-        date: day.date,
-        adhanTime: day.eshaAdhan,
-      );
-    }
-
-    if (kDebugMode) {
-      final pending = await LocalNotificationService.instance.pending();
-      debugPrint('Prayer notifications scheduled: ${pending.length}');
+      await _schedulePrayer(dayIndex, 1, 'Fajr', day.date, day.fajrAdhan);
+      await _schedulePrayer(dayIndex, 2, 'Zohr', day.date, day.zohrAdhan);
+      await _schedulePrayer(dayIndex, 3, 'Asr', day.date, day.asrAdhan);
+      await _schedulePrayer(dayIndex, 4, 'Maghrib', day.date, day.maghribAdhan);
+      await _schedulePrayer(dayIndex, 5, 'Esha', day.date, day.eshaAdhan);
     }
   }
 
-  Future<void> _schedulePrayer({
-    required int dayIndex,
-    required int prayerIndex,
-    required String prayerName,
-    required DateTime date,
-    required String adhanTime,
-  }) async {
+  Future<void> _schedulePrayer(
+    int dayIndex,
+    int prayerIndex,
+    String prayerName,
+    DateTime date,
+    String adhanTime,
+  ) async {
     final when = PrayerTimeService.instance.parseTimeForDate(date, adhanTime);
 
     if (when == null) return;
@@ -105,24 +59,19 @@ class PrayerNotificationService {
     await LocalNotificationService.instance.scheduleOne(
       id: id,
       when: when,
-      title: '$prayerName time',
-      body: '$prayerName Adhan is at $adhanTime',
+      title: '$prayerName Adhan',
+      body: 'Time for $prayerName prayer',
       channelId: LocalNotificationService.prayerChannelId,
       channelName: 'Prayer Notifications',
+      payload: 'adhan',
     );
 
-    // 🔥 TRIGGER FULLSCREEN ADHAN
+    // 🔥 FULLSCREEN TRIGGER
     Future.delayed(
       when.difference(DateTime.now()),
       () => AdhanTrigger.showAdhan(),
     );
   }
-
-  /*
-  ------------------------------------------------------------
-  JUMUAH SCHEDULER
-  ------------------------------------------------------------
-  */
 
   Future<void> cancelJumuah() async {
     await LocalNotificationService.instance.cancel(_jumuah1Id);
@@ -142,6 +91,7 @@ class PrayerNotificationService {
       body: 'Jumu’ah khutbah will start soon.',
       channelId: LocalNotificationService.generalChannelId,
       channelName: 'General Notifications',
+      payload: 'jumuah',
     );
 
     await LocalNotificationService.instance.scheduleOne(
@@ -151,29 +101,16 @@ class PrayerNotificationService {
       body: 'Please proceed to the masjid for Jumu’ah prayer.',
       channelId: LocalNotificationService.generalChannelId,
       channelName: 'General Notifications',
+      payload: 'jumuah',
     );
   }
 }
 
-/*
-------------------------------------------------------------
-ADHAN TRIGGER SYSTEM
-------------------------------------------------------------
-*/
-
 class AdhanTrigger {
-  static GlobalKey<NavigatorState> navigatorKey =
-      GlobalKey<NavigatorState>();
-
   static void showAdhan() {
     final context = navigatorKey.currentContext;
     if (context == null) return;
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const AdhanScreen(),
-      ),
-    );
+    Navigator.pushNamed(context, '/adhan');
   }
 }

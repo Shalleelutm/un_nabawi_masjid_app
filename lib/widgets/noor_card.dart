@@ -9,22 +9,26 @@ class NoorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 400),
       margin: const EdgeInsets.symmetric(vertical: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.green.withOpacity(0.8),
-            Colors.black
+            Colors.green.withOpacity(0.85),
+            Colors.black,
           ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(22),
         boxShadow: [
           BoxShadow(
-            color: Colors.green.withOpacity(0.6),
-            blurRadius: 25,
-          )
+            color: Colors.green.withOpacity(0.5),
+            blurRadius: 30,
+            spreadRadius: 1,
+          ),
         ],
       ),
       child: child,

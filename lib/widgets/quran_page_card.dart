@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/bookmark_service.dart';
 
 class QuranPageCard extends StatefulWidget {
   final String surahName;
@@ -22,6 +23,8 @@ class _QuranPageCardState extends State<QuranPageCard>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _highlight;
+
+  bool bookmarked = false;
 
   @override
   void initState() {
@@ -49,13 +52,25 @@ class _QuranPageCardState extends State<QuranPageCard>
     super.dispose();
   }
 
+  void toggleBookmark() {
+    BookmarkService.add(widget.arabicText);
+
+    setState(() {
+      bookmarked = true;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Ayah bookmarked')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final ColorScheme cs = Theme.of(context).colorScheme;
+    final cs = Theme.of(context).colorScheme;
 
     return AnimatedBuilder(
       animation: _highlight,
-      builder: (BuildContext context, Widget? child) {
+      builder: (_, __) {
         return Container(
           margin: const EdgeInsets.symmetric(vertical: 10),
           padding: const EdgeInsets.all(18),
@@ -63,66 +78,61 @@ class _QuranPageCardState extends State<QuranPageCard>
             color: cs.surface,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: const Color(0xFFE7C55B).withValues(alpha: 0.35),
-            ),
-            gradient: LinearGradient(
-              colors: <Color>[
-                const Color(0xFFE7C55B).withValues(alpha: 0.05),
-                cs.surface,
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              color: const Color(0xFFE7C55B).withValues(alpha: 0.25),
             ),
           ),
-          child: Stack(
-            children: <Widget>[
-              Positioned.fill(
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: FractionallySizedBox(
-                    widthFactor: _highlight.value,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE7C55B).withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
+          child: Column(
+            children: [
+              // HEADER
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
                   Text(
                     '${widget.surahName} • Ayah ${widget.ayahNumber}',
                     style: const TextStyle(
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       fontSize: 15,
                     ),
                   ),
-                  const SizedBox(height: 14),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      widget.arabicText,
-                      textAlign: TextAlign.right,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        height: 1.8,
-                      ),
+                  IconButton(
+                    icon: Icon(
+                      bookmarked
+                          ? Icons.bookmark
+                          : Icons.bookmark_border,
+                      color: Colors.orange,
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    widget.translation,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: cs.onSurface.withValues(alpha: 0.82),
-                      height: 1.5,
-                    ),
-                  ),
+                    onPressed: toggleBookmark,
+                  )
                 ],
+              ),
+
+              const SizedBox(height: 12),
+
+              // 🔥 ARABIC TEXT (WOW STYLE FIXED)
+              Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  widget.arabicText,
+                  textAlign: TextAlign.right,
+                  style: const TextStyle(
+                    fontSize: 26,
+                    height: 1.8,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 14),
+
+              // TRANSLATION
+              Text(
+                widget.translation,
+                style: TextStyle(
+                  fontSize: 15,
+                  height: 1.5,
+                  color: cs.onSurface.withValues(alpha: 0.85),
+                ),
               ),
             ],
           ),

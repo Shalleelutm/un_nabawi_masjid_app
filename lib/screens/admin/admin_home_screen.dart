@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../core/app_routes.dart';
 import '../../core/ui_feedback.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/role_provider.dart';
 import '../../services/local_notification_service.dart';
 import '../../services/prayer_auto_scheduler_service.dart';
 import '../../services/prayer_time_service.dart';
@@ -229,10 +230,11 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final role = context.watch<RoleProvider>();
     final auth = context.watch<AuthProvider>();
     final cs = Theme.of(context).colorScheme;
 
-    if (!auth.isLoggedIn || !auth.isAdmin) {
+    if (!auth.isLoggedIn || !role.isAdmin) {
       return Scaffold(
         appBar: AppBar(title: const Text('Admin Dashboard')),
         body: const Center(
@@ -320,6 +322,13 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                         },
                         icon: const Icon(Icons.fact_check_rounded),
                         label: const Text('Service Requests'),
+                      ),
+                      OutlinedButton.icon(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/adminGallery');
+                        },
+                        icon: const Icon(Icons.photo_library),
+                        label: const Text('Gallery'),
                       ),
                     ],
                   ),
