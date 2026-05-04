@@ -12,3 +12,20 @@ local.properties
 .vscode/
 *.log
 temp_assets/
+# Flutter
+build/
+.dart_tool/
+.packages
+.pub-cache/
+.flutter-plugins-dependencies
+
+# Android
+android/.gradle/
+android/app/build/
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+
+# VS Code
+.vscode/
