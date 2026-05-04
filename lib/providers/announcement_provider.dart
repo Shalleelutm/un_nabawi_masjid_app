@@ -1,43 +1,20 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-
-// 🔥 FIX IMPORT (THIS IS YOUR ERROR)
 import '../services/announcement_service.dart';
-
-class AnnouncementItem {
-  final String id;
-  final String title;
-  final String message;
-  final bool isImportant;
-  final DateTime createdAt;
-
-  final bool active;
-  final DateTime? expiryDate;
-  final String imageUrl;
-  final String videoUrl;
-
-  const AnnouncementItem({
-    required this.id,
-    required this.title,
-    required this.message,
-    required this.isImportant,
-    required this.createdAt,
-    required this.active,
-    required this.expiryDate,
-    required this.imageUrl,
-    required this.videoUrl,
-  });
-}
 
 class AnnouncementProvider extends ChangeNotifier {
   List<AnnouncementItem> _items = [];
   StreamSubscription<List<AnnouncementItem>>? _sub;
   bool _loading = true;
+  bool _started = false;
 
   List<AnnouncementItem> get items => List.unmodifiable(_items);
   bool get loading => _loading;
 
   void start() {
+    if (_started) return;
+    _started = true;
+    
     _sub?.cancel();
     _loading = true;
     notifyListeners();
@@ -46,7 +23,17 @@ class AnnouncementProvider extends ChangeNotifier {
       _items = data;
       _loading = false;
       notifyListeners();
+    }, onError: (error) {
+      _loading = false;
+      _items = [];
+      notifyListeners();
     });
+  }
+
+  void refresh() {
+    _sub?.cancel();
+    _started = false;
+    start();
   }
 
   @override

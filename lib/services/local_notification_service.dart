@@ -1,6 +1,9 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter/material.dart';
+import '../screens/adhan/adhan_screen.dart';
+import '../main.dart';
 
 class LocalNotificationService {
   LocalNotificationService._();
@@ -26,7 +29,14 @@ class LocalNotificationService {
       iOS: DarwinInitializationSettings(),
     );
 
-    await _plugin.initialize(initSettings);
+    await _plugin.initialize(
+      initSettings,
+      onDidReceiveNotificationResponse: (details) {
+        if (details.payload == 'adhan') {
+          AdhanTrigger.showAdhan();
+        }
+      },
+    );
 
     final androidPlatform =
         _plugin.resolvePlatformSpecificImplementation<
@@ -81,6 +91,11 @@ class LocalNotificationService {
       ),
       payload: payload,
     );
+
+    // ✅ TRIGGER ADHAN SCREEN
+    if (payload == 'adhan') {
+      AdhanTrigger.showAdhan();
+    }
   }
 
   Future<void> showInstant({
@@ -135,7 +150,6 @@ class LocalNotificationService {
             UILocalNotificationDateInterpretation.absoluteTime,
       );
     } catch (e) {
-      // fallback if exact alarms are not allowed (Android 13+ emulator)
       await _plugin.zonedSchedule(
         id,
         title,
@@ -192,5 +206,19 @@ class LocalNotificationService {
 
   Future<List<PendingNotificationRequest>> pending() async {
     return _plugin.pendingNotificationRequests();
+  }
+}
+
+class AdhanTrigger {
+  static void showAdhan() {
+    final context = navigatorKey.currentContext;
+    if (context == null) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const AdhanScreen(),
+      ),
+    );
   }
 }

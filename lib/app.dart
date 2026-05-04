@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'core/app_routes.dart';
 import 'core/app_theme.dart';
-import 'services/prayer_notification_service.dart';
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -11,16 +11,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Un Nabawi Masjid',
       debugShowCheckedModeBanner: false,
+      navigatorKey: navigatorKey,
 
-      // 🔥 REQUIRED FOR ADHAN FULLSCREEN
-      navigatorKey: AdhanTrigger.navigatorKey,
-
-      // THEME
       theme: AppTheme.light(),
-
-      // START SCREEN
       initialRoute: AppRoutes.splash,
-
       routes: AppRoutes.routes,
     );
   }

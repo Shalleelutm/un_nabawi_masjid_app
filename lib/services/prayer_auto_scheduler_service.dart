@@ -1,12 +1,12 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'prayer_notification_engine.dart';
+import 'prayer_time_service.dart';
 
 class PrayerAutoSchedulerService {
   PrayerAutoSchedulerService._();
 
-  static final PrayerAutoSchedulerService instance =
-      PrayerAutoSchedulerService._();
+  static final PrayerAutoSchedulerService instance = PrayerAutoSchedulerService._();
 
   static const String _lastScheduledDateKey = 'prayer_last_scheduled_date';
 
@@ -15,6 +15,7 @@ class PrayerAutoSchedulerService {
   }
 
   Future<void> initializeAndSchedule() async {
+    await PrayerTimeService.instance.loadFromAssets();
     await PrayerNotificationEngine.instance.initialize();
     await rescheduleIfNeeded();
   }
@@ -65,11 +66,9 @@ class PrayerAutoSchedulerService {
 
   String _todayKey() {
     final now = DateTime.now();
-
     final y = now.year.toString().padLeft(4, '0');
     final m = now.month.toString().padLeft(2, '0');
     final d = now.day.toString().padLeft(2, '0');
-
     return '$y-$m-$d';
   }
 }

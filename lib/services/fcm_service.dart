@@ -1,9 +1,6 @@
-// ignore_for_file: prefer_single_quotes
-
-import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import '../main.dart';
 
 class FcmService {
   FcmService._();
@@ -14,45 +11,51 @@ class FcmService {
       FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
+    // 🔥 PERMISSION
     await _fcm.requestPermission();
 
+    // 🔥 TOKEN
+    final token = await _fcm.getToken();
+    print('🔥 FCM TOKEN: $token');
+
+    // 🔥 LOCAL INIT
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
 
     await _local.initialize(
       const InitializationSettings(android: android),
     );
 
-    // 🔥 SUBSCRIBE TO MEMBERS
-    await _fcm.subscribeToTopic('members');
+    // 🔥 LISTENERS
+    FirebaseMessaging.onMessage.listen(_handleMessage);
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleOpen);
 
-    // 🔥 FOREGROUND
-    FirebaseMessaging.onMessage.listen((event) {
-      final notif = event.notification;
-      if (notif != null) {
-        _show(notif.title, notif.body);
-      }
-    });
+    // 🔥 TOPICS (FINAL)
+    await _fcm.subscribeToTopic('announcements');
+    await _fcm.subscribeToTopic('events');
+    await _fcm.subscribeToTopic('chat');
 
-    // 🔥 BACKGROUND TAP
-    FirebaseMessaging.onMessageOpenedApp.listen((event) {
-      debugPrint("Notification clicked");
-    });
-
-    // 🔥 TERMINATED
-    final initial = await _fcm.getInitialMessage();
-    if (initial != null) {
-      debugPrint("App opened from terminated state");
-    }
+    print('✅ FCM READY');
   }
 
-  Future<void> _show(String? title, String? body) async {
-    await _local.show(
+  Future<void> subscribe(String topic) async {
+    await _fcm.subscribeToTopic(topic);
+  }
+
+  Future<void> unsubscribe(String topic) async {
+    await _fcm.unsubscribeFromTopic(topic);
+  }
+
+  void _handleMessage(RemoteMessage msg) {
+    final notif = msg.notification;
+    if (notif == null) return;
+
+    _local.show(
       DateTime.now().millisecondsSinceEpoch ~/ 1000,
-      title,
-      body,
+      notif.title,
+      notif.body,
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          'masjid_channel',
+          'masjid',
           'Masjid Notifications',
           importance: Importance.max,
           priority: Priority.high,
@@ -60,9 +63,14 @@ class FcmService {
       ),
     );
   }
-}
 
-// 🔥 BACKGROUND HANDLER (REQUIRED)
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  debugPrint("Background message: ${message.notification?.title}");
+  void _handleOpen(RemoteMessage msg) {
+    final type = msg.data['type'];
+
+    if (type == 'chat') {
+      navigatorKey.currentState?.pushNamed('/requests');
+    } else {
+      navigatorKey.currentState?.pushNamed('/announcements');
+    }
+  }
 }
